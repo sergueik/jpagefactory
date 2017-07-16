@@ -13,7 +13,8 @@ import org.openqa.selenium.support.pagefactory.ByChained;
 import java.lang.reflect.Field;
 
 /**
- * Created by henrrich on 13/04/2016. updated by sergueik on 07/31/2016
+ * Created by henrrich on 13/04/2016. 
+ * Updated by sergueik on 07/31/2016,05/16/2017
  */
 public class JPageFactoryAnnotations extends Annotations {
 
@@ -27,17 +28,17 @@ public class JPageFactoryAnnotations extends Annotations {
 	public By buildBy() {
 		this.assertValidAnnotations();
 		By ans = null;
-		FindBys findBys = (FindBys) this.getField().getAnnotation(FindBys.class);
+		FindBys findBys = this.getField().getAnnotation(FindBys.class);
 		if (findBys != null) {
 			ans = this.buildByFromFindBys(findBys);
 		}
 
-		FindAll findAll = (FindAll) this.getField().getAnnotation(FindAll.class);
+		FindAll findAll = this.getField().getAnnotation(FindAll.class);
 		if (ans == null && findAll != null) {
 			ans = this.buildBysFromFindByOneOf(findAll);
 		}
 
-		FindBy findBy = (FindBy) this.getField().getAnnotation(FindBy.class);
+		FindBy findBy = this.getField().getAnnotation(FindBy.class);
 		if (ans == null && findBy != null) {
 			ans = this.buildByFromFindBy(findBy);
 		}
@@ -169,11 +170,7 @@ public class JPageFactoryAnnotations extends Annotations {
 	private String getUsingDefinition(FindBy findBy) {
 		String using = findBy.using();
 		if (using.isEmpty()) {
-			if (isWebChannel) {
-				using = findBy.usingWeb();
-			} else {
-				using = findBy.usingMobile();
-			}
+			using = (isWebChannel) ? findBy.usingWeb() : findBy.usingMobile();
 		} else {
 			if (!findBy.usingWeb().isEmpty() || !findBy.usingMobile().isEmpty()) {
 				throw new IllegalArgumentException(
@@ -186,11 +183,7 @@ public class JPageFactoryAnnotations extends Annotations {
 	private How getHowDefinition(FindBy findBy) {
 		How how = findBy.how();
 		if (how.equals(How.UNSET)) {
-			if (isWebChannel) {
-				how = findBy.howWeb();
-			} else {
-				how = findBy.howMobile();
-			}
+			how = (isWebChannel) ? findBy.howWeb() : findBy.howMobile();
 		} else {
 			if (!findBy.howWeb().equals(How.UNSET)
 					|| !findBy.howMobile().equals(How.UNSET)) {
@@ -202,9 +195,9 @@ public class JPageFactoryAnnotations extends Annotations {
 	}
 
 	protected void assertValidAnnotations() {
-		FindBys findBys = (FindBys) this.getField().getAnnotation(FindBys.class);
-		FindAll findAll = (FindAll) this.getField().getAnnotation(FindAll.class);
-		FindBy findBy = (FindBy) this.getField().getAnnotation(FindBy.class);
+		FindBys findBys = this.getField().getAnnotation(FindBys.class);
+		FindAll findAll = this.getField().getAnnotation(FindAll.class);
+		FindBy findBy = this.getField().getAnnotation(FindBy.class);
 		if (findBys != null && findBy != null) {
 			throw new IllegalArgumentException(
 					"If you use a \'@FindBys\' annotation, you must not also use a \'@FindBy\' annotation");

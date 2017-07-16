@@ -1,28 +1,29 @@
 package org.henrrich.jpagefactory.example.multiselect;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import org.henrrich.jpagefactory.Channel;
+import org.henrrich.jpagefactory.JPageFactory;
+
 import com.jprotractor.NgWebDriver;
 import com.jprotractor.NgWebElement;
 import com.jprotractor.NgBy;
 
-import org.henrrich.jpagefactory.Channel;
-import org.henrrich.jpagefactory.JPageFactory;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Ignore;
+
+import org.openqa.selenium.Platform;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.firefox.internal.ProfilesIni;
-import org.openqa.selenium.Platform;
-import org.openqa.selenium.WebDriver;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * Created by sergueik on 31/07/2016.
@@ -41,7 +42,7 @@ public class NgMultiSelectTest {
 	@Before
 	public void setUp() throws Exception {
 
-		// change according to platformm
+		// change according to platform
 		System.setProperty("webdriver.chrome.driver",
 				"C:\\java\\selenium\\chromedriver.exe");
 
@@ -70,7 +71,7 @@ public class NgMultiSelectTest {
 
 		}
 
-		baseUrl = baseUrl = "http://amitava82.github.io/angular-multiselect/";
+		baseUrl = "http://amitava82.github.io/angular-multiselect/";
 		ngDriver.get(baseUrl);
 		ngDriver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 		page = new NgMultiSelectPage();
@@ -88,10 +89,9 @@ public class NgMultiSelectTest {
 	public void testSelectCarsOneByOne() throws Exception {
 		page.openSelect();
 		page.selectAllCars();
-    System.err.println(page
-				.getStatus());
-		Assert.assertTrue("Should be able to select cars", page
-				.getStatus().matches("There are (\\d+) car\\(s\\) selected"));
+		System.err.println(page.getStatus());
+		Assert.assertTrue("Should be able to select cars",
+				page.getStatus().matches("There are (\\d+) car\\(s\\) selected"));
 	}
 
 	@After
