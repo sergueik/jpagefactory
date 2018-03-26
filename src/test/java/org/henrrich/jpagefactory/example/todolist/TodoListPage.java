@@ -6,9 +6,9 @@ import org.henrrich.jpagefactory.How;
 import org.henrrich.jpagefactory.annotations.FindAll;
 import org.henrrich.jpagefactory.annotations.FindBy;
 
-import com.jprotractor.NgWebDriver;
-import com.jprotractor.NgWebElement;
-import com.jprotractor.NgBy;
+import com.github.sergueik.jprotractor.NgWebDriver;
+import com.github.sergueik.jprotractor.NgWebElement;
+import com.github.sergueik.jprotractor.NgBy;
 
 import org.openqa.selenium.WebElement;
 
@@ -18,23 +18,23 @@ import org.openqa.selenium.WebElement;
  */
 
 public class TodoListPage {
-	private NgWebDriver _driver;
+	private NgWebDriver ngDriver;
 
-	public void setDriver(NgWebDriver driver) {
-		this._driver = driver;
+	public void setDriver(NgWebDriver ngDriver) {
+		this.ngDriver = ngDriver;
 	}
 
 	public NgWebDriver getDriver() {
-		return _driver;
+		return ngDriver;
 	}
 
 	@FindAll({
 			@FindBy(how = How.CSS_CONTAINING_TEXT, using = "span.todoName", text = "Angular-js") })
-	private List<WebElement> _rows;
+	private List<WebElement> rows;
 
 	public int countRows() {
-		_rows.stream()
+		rows.stream()
 				.forEachOrdered(element -> System.err.println(element.getText()));
-		return _rows.size();
+		return rows.size();
 	}
 }

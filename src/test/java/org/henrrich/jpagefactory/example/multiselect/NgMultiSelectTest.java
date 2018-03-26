@@ -1,5 +1,6 @@
 package org.henrrich.jpagefactory.example.multiselect;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -7,9 +8,9 @@ import java.util.concurrent.TimeUnit;
 import org.henrrich.jpagefactory.Channel;
 import org.henrrich.jpagefactory.JPageFactory;
 
-import com.jprotractor.NgWebDriver;
-import com.jprotractor.NgWebElement;
-import com.jprotractor.NgBy;
+import com.github.sergueik.jprotractor.NgWebDriver;
+import com.github.sergueik.jprotractor.NgWebElement;
+import com.github.sergueik.jprotractor.NgBy;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -32,11 +33,14 @@ public class NgMultiSelectTest {
 
 	private NgWebDriver ngDriver;
 	private static WebDriver seleniumDriver;
-	private String baseUrl;
+	private final String baseUrl = "http://amitava82.github.io/angular-multiselect/";;
+	private static String osName = getOsName();
 
-	// change this boolean flag to true to run on chrome emulator
+	// change to true to run on Chrome emulator
 	private boolean isMobile = false;
+	private final Channel channel = isMobile ? Channel.MOBILE : Channel.WEB;
 
+	// strongly-typed Page object
 	private NgMultiSelectPage page;
 
 	@Before
@@ -47,9 +51,9 @@ public class NgMultiSelectTest {
 				"C:\\java\\selenium\\chromedriver.exe");
 
 		if (isMobile) {
-			Map<String, String> mobileEmulation = new HashMap<String, String>();
+			Map<String, String> mobileEmulation = new HashMap<>();
 			mobileEmulation.put("deviceName", "Google Nexus 5");
-			Map<String, Object> chromeOptions = new HashMap<String, Object>();
+			Map<String, Object> chromeOptions = new HashMap<>();
 			chromeOptions.put("mobileEmulation", mobileEmulation);
 			DesiredCapabilities capabilities = DesiredCapabilities.chrome();
 			capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
@@ -58,28 +62,31 @@ public class NgMultiSelectTest {
 			// ourselves instead of using waitForAngular call in JProtractor
 			ngDriver = new NgWebDriver(new ChromeDriver(capabilities), true);
 		} else {
+			/*
+				DesiredCapabilities capabilities = new DesiredCapabilities("firefox", "",
+						Platform.ANY);
+				FirefoxProfile profile = new ProfilesIni().getProfile("default");
+				profile.setEnableNativeEvents(false);
+				capabilities.setCapability("firefox_profile", profile);
+				seleniumDriver = new FirefoxDriver(capabilities);
+			*/
 
-			DesiredCapabilities capabilities = new DesiredCapabilities("firefox", "",
-					Platform.ANY);
-			FirefoxProfile profile = new ProfilesIni().getProfile("default");
-			profile.setEnableNativeEvents(false);
-			capabilities.setCapability("firefox_profile", profile);
-			seleniumDriver = new FirefoxDriver(capabilities);
+			System.setProperty("webdriver.chrome.driver",
+					osName.toLowerCase().startsWith("windows")
+							? new File("c:/java/selenium/chromedriver.exe").getAbsolutePath()
+							: "/var/run/chromedriver");
+			DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+
+			seleniumDriver = new ChromeDriver(capabilities);
 			ngDriver = new NgWebDriver(seleniumDriver, true);
-
-			// ngDriver = new NgWebDriver(new ChromeDriver(), true);
 
 		}
 
-		baseUrl = "http://amitava82.github.io/angular-multiselect/";
 		ngDriver.get(baseUrl);
 		ngDriver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 		page = new NgMultiSelectPage();
 		page.setDriver(ngDriver);
-		Channel channel = Channel.WEB;
-		if (isMobile) {
-			channel = Channel.MOBILE;
-		}
+
 		JPageFactory.initElements(ngDriver, channel, page);
 
 	}
@@ -99,4 +106,11 @@ public class NgMultiSelectTest {
 		ngDriver.quit();
 	}
 
+	// Utilities
+	public static String getOsName() {
+		if (osName == null) {
+			osName = System.getProperty("os.name");
+		}
+		return osName;
+	}
 }
